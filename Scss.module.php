@@ -3,6 +3,8 @@
 namespace ProcessWire;
 
 use ScssPhp\ScssPhp\Compiler;
+use ScssPhp\ScssPhp\Formatter;
+use ScssPhp\ScssPhp\OutputStyle;
 
 /**
  * @author Bernhard Baumrock, 20.10.2022
@@ -18,7 +20,7 @@ class Scss extends WireData implements Module
   {
     return [
       'title' => 'Scss',
-      'version' => '1.0.0',
+      'version' => '1.0.1',
       'summary' => 'Module to compile CSS files from SCSS',
       'autoload' => false,
       'singular' => true,
@@ -39,6 +41,7 @@ class Scss extends WireData implements Module
   {
     $path = $this->wire->config->paths->wire;
     $opt = ['extensions' => ['scss']];
+    $this->compiler->setOutputStyle(OutputStyle::COMPRESSED);
     foreach ($this->wire->files->find($path, $opt) as $scss) {
       $css = substr($scss, 0, -4) . "css";
       if (!is_file($css)) continue;
