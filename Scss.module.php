@@ -24,6 +24,9 @@ class Scss extends WireData implements Module
       'autoload' => false,
       'singular' => true,
       'icon' => 'css3',
+      'requires' => [
+        'PHP>=8.0',
+      ],
     ];
   }
 
