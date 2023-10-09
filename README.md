@@ -43,3 +43,37 @@ $modules->get('Scss')->watchCore();
 ```
 
 Now your SCSS files will be watched for changes and once you change something and reload your page you'll get the new CSS on the fly and can commit both changes 😎
+
+## Compile UIkit
+
+```php
+// for development you can put this in site/ready.php
+
+/** @var Scss $scss */
+$scss = $this->wire->modules->get('Scss');
+
+// find all .scss files from the uikit source
+$uikit = $files->find(
+  $config->paths->templates . "uikit/src/scss/",
+  ['extensions' => 'scss']
+);
+// also watch all files in /site/templates/scss
+$custom = $files->find(
+  $config->paths->templates . "scss",
+  ['extensions' => 'scss']
+);
+$watchFiles = array_merge($uikit, $custom);
+
+// set the import path so that relative @import statements work
+$scss->compiler()->setImportPaths($config->paths->templates);
+
+// compile SCSS to CSS if any of the watched files changed
+$scss->compileIfChanged(
+  // create this file with the content from the uikit docs:
+  // https://getuikit.com/docs/sass#how-to-build
+  input: $config->paths->templates . "scss/uikit.scss",
+  watch: $watchFiles,
+  output: $config->paths->templates . "scss/uikit.css",
+  style: 'compressed',
+);
+```
