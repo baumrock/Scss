@@ -52,17 +52,11 @@ Now your SCSS files will be watched for changes and once you change something an
 /** @var Scss $scss */
 $scss = $this->wire->modules->get('Scss');
 
-// find all .scss files from the uikit source
-$uikit = $files->find(
-  $config->paths->templates . "uikit/src/scss/",
-  ['extensions' => 'scss']
-);
 // also watch all files in /site/templates/scss
-$custom = $files->find(
+$watchFiles = $files->find(
   $config->paths->templates . "scss",
   ['extensions' => 'scss']
 );
-$watchFiles = array_merge($uikit, $custom);
 
 // set the import path so that relative @import statements work
 $scss->compiler()->setImportPaths($config->paths->templates);
