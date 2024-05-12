@@ -920,11 +920,27 @@ class Compiler
                 continue;
             }
 
+            /*
             // check that we are not building an infinite loop of extensions
             // if the new part is just including a previous part don't try to extend anymore
             if (\count($part) > 1) {
                 foreach ($partsPile as $previousPart) {
                     if (! \count(array_diff($previousPart, $part))) {
+                        continue 2;
+                    }
+                }
+            }*/
+
+            // check that we are not building an infinite loop of extensions
+            // if the new part is just including a previous part don't try to extend anymore
+            if (\count($part) > 1) {
+                foreach ($partsPile as $previousPart) {
+                    // old
+                    // if (! \count(array_diff($previousPart, $part))) {
+                    // 	continue 2;
+                    // }
+                    // new
+                    if (! \count($this->diff_recursive($previousPart, $part))) {
                         continue 2;
                     }
                 }
@@ -2330,10 +2346,10 @@ class Compiler
     protected function pushCallStack($name = '')
     {
         $this->callStack[] = [
-          'n' => $name,
-          Parser::SOURCE_INDEX => $this->sourceIndex,
-          Parser::SOURCE_LINE => $this->sourceLine,
-          Parser::SOURCE_COLUMN => $this->sourceColumn
+            'n' => $name,
+            Parser::SOURCE_INDEX => $this->sourceIndex,
+            Parser::SOURCE_LINE => $this->sourceLine,
+            Parser::SOURCE_COLUMN => $this->sourceColumn
         ];
 
         // infinite calling loop
@@ -2445,9 +2461,9 @@ class Compiler
                     if (
                         $q[0] == Type::T_MEDIA_TYPE &&
                         (strpos($value, '(') !== false ||
-                        strpos($value, ')') !== false ||
-                        strpos($value, ':') !== false ||
-                        strpos($value, ',') !== false)
+                            strpos($value, ')') !== false ||
+                            strpos($value, ':') !== false ||
+                            strpos($value, ',') !== false)
                     ) {
                         $shouldReparse = true;
                     }
@@ -3006,7 +3022,7 @@ class Compiler
 
                     $shouldSet = $isDefault &&
                         (\is_null($result = $this->get($name[1], false)) ||
-                        $result === static::$null);
+                            $result === static::$null);
 
                     if (! $isDefault || $shouldSet) {
                         $this->set($name[1], $this->reduce($value), true, null, $value);
@@ -3517,7 +3533,7 @@ EOL;
                     return $this->shouldEval($value[2]) || $this->shouldEval($value[3]);
                 }
 
-                // fall-thru
+            // fall-thru
             case Type::T_VARIABLE:
             case Type::T_FUNCTION_CALL:
                 return true;
@@ -3557,7 +3573,7 @@ EOL;
                 if (
                     $opName == 'div' && ! $inParens && ! $inExp &&
                     (($right[0] !== Type::T_NUMBER && isset($right[2]) && $right[2] != '') ||
-                    ($right[0] === Type::T_NUMBER && ! $right->unitless()))
+                        ($right[0] === Type::T_NUMBER && ! $right->unitless()))
                 ) {
                     return $this->expToString($value);
                 }
@@ -4155,8 +4171,8 @@ EOL;
     protected function opAnd($left, $right, $shouldEval)
     {
         $truthy = ($left === static::$null || $right === static::$null) ||
-                  ($left === static::$false || $left === static::$true) &&
-                  ($right === static::$false || $right === static::$true);
+            ($left === static::$false || $left === static::$true) &&
+            ($right === static::$false || $right === static::$true);
 
         if (! $shouldEval) {
             if (! $truthy) {
@@ -4183,8 +4199,8 @@ EOL;
     protected function opOr($left, $right, $shouldEval)
     {
         $truthy = ($left === static::$null || $right === static::$null) ||
-                  ($left === static::$false || $left === static::$true) &&
-                  ($right === static::$false || $right === static::$true);
+            ($left === static::$false || $left === static::$true) &&
+            ($right === static::$false || $right === static::$true);
 
         if (! $shouldEval) {
             if (! $truthy) {
@@ -5627,7 +5643,7 @@ EOL;
     public function setLineNumberStyle($lineNumberStyle)
     {
         @trigger_error('The line number output is not supported anymore. '
-                       . 'Use source maps instead.', E_USER_DEPRECATED);
+            . 'Use source maps instead.', E_USER_DEPRECATED);
     }
 
     /**
@@ -6217,8 +6233,8 @@ EOL;
                 if ($all || (isset($call['n']) && $call['n'])) {
                     $msg = '#' . $ncall++ . ' ' . $call['n'] . ' ';
                     $msg .= (isset($this->sourceNames[$call[Parser::SOURCE_INDEX]])
-                          ? $this->getPrettyPath($this->sourceNames[$call[Parser::SOURCE_INDEX]])
-                          : '(unknown file)');
+                        ? $this->getPrettyPath($this->sourceNames[$call[Parser::SOURCE_INDEX]])
+                        : '(unknown file)');
                     $msg .= ' on line ' . $call[Parser::SOURCE_LINE];
 
                     $callStackMsg[] = $msg;
@@ -6372,12 +6388,12 @@ EOL;
     {
         $name = str_replace("-", "_", $name);
         $libName = 'lib' . preg_replace_callback(
-            '/_(.)/',
-            function ($m) {
-                return ucfirst($m[1]);
-            },
-            ucfirst($name)
-        );
+                '/_(.)/',
+                function ($m) {
+                    return ucfirst($m[1]);
+                },
+                ucfirst($name)
+            );
         return $libName;
     }
 
@@ -7219,7 +7235,7 @@ EOL;
                         switch ($nofValues) {
                             case 4:
                                 $nbChannels = 4;
-                                // then continuing with the case 3:
+                            // then continuing with the case 3:
                             case 3:
                                 for ($i = 0; $i < $nbChannels; $i++) {
                                     $t = $num & 0xf;
@@ -7231,7 +7247,7 @@ EOL;
 
                             case 8:
                                 $nbChannels = 4;
-                                // then continuing with the case 6:
+                            // then continuing with the case 6:
                             case 6:
                                 for ($i = 0; $i < $nbChannels; $i++) {
                                     array_unshift($color, $num & 0xff);
@@ -8211,7 +8227,7 @@ EOL;
     protected static $libMix = [
         ['color1', 'color2', 'weight:50%'],
         ['color-1', 'color-2', 'weight:50%']
-        ];
+    ];
     protected function libMix($args)
     {
         list($first, $second, $weight) = $args;
@@ -8338,10 +8354,10 @@ EOL;
     }
 
     protected static $libHsla = [
-            ['channels'],
-            ['hue', 'saturation'],
-            ['hue', 'saturation', 'lightness'],
-            ['hue', 'saturation', 'lightness', 'alpha']];
+        ['channels'],
+        ['hue', 'saturation'],
+        ['hue', 'saturation', 'lightness'],
+        ['hue', 'saturation', 'lightness', 'alpha']];
     protected function libHsla($args, $kwargs)
     {
         return $this->libHsl($args, $kwargs, 'hsla');
@@ -9363,7 +9379,7 @@ will be an error in future versions of Sass.\n         on line $line of $fname";
                     return 'color';
                 }
 
-                // fall-thru
+            // fall-thru
             case Type::T_FUNCTION:
                 return 'string';
 
@@ -9375,7 +9391,7 @@ will be an error in future versions of Sass.\n         on line $line of $fname";
                     return 'arglist';
                 }
 
-                // fall-thru
+            // fall-thru
             default:
                 return $value[0];
         }
@@ -10468,5 +10484,21 @@ TXT;
         }
 
         return [Type::T_LIST, ',', $listParts];
+    }
+
+    protected function diff_recursive($array1, $array2) {
+        $difference=array();
+        foreach($array1 as $key => $value) {
+            if(is_array($value) && isset($array2[$key])){ // it's an array and both have the key
+                $new_diff = diff_recursive($value, $array2[$key]);
+                if( !empty($new_diff) )
+                    $difference[$key] = $new_diff;
+            } else if(is_string($value) && !in_array($value, $array2)) { // the value is a string and it's not in array B
+                $difference[$key] = $value . " is missing from the second array";
+            } else if(!is_numeric($key) && !array_key_exists($key, $array2)) { // the key is not numberic and is missing from array B
+                $difference[$key] = "Missing from the second array";
+            }
+        }
+        return $difference;
     }
 }
