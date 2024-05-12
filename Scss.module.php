@@ -19,7 +19,7 @@ class Scss extends WireData implements Module
   {
     return [
       'title' => 'Scss',
-      'version' => '1.2.0',
+      'version' => '1.1.0',
       'summary' => 'Module to compile CSS files from SCSS',
       'autoload' => false,
       'singular' => true,
@@ -57,6 +57,63 @@ class Scss extends WireData implements Module
     $css = $compiler->compileString($content)->getCss();
     $this->wire->files->filePutContents($output, $css);
   }
+
+    /**
+     * Compile function to use with RockFrontend
+     *
+     * $output can be left empty, then it will take the input file and replace
+     * the .scss ending with .css ending!
+     *
+     * @throws \ScssPhp\ScssPhp\Exception\SassException
+     */
+    public function compileRF(
+        string $input,
+        string $output,
+        string $cssPath,
+        string $import,
+        string $style = 'compressed',
+        string $SourcemapFile = '',
+    ): void {
+        // auto-create output path if no custom one is set
+        if (!$output) $output = substr($input, 0, -4) . "css";
+
+        // get scss content of input file
+        $content = '@import "' . $input . '"';
+
+        // get compiler and set output style
+        $compiler = $this->compiler();
+        $compiler->setImportPaths($import);
+        if ($SourcemapFile) {
+            $compiler->setSourceMap(Compiler::SOURCE_MAP_FILE);
+            $compiler->setSourceMapOptions([
+                'sourceMapWriteTo'  => $SourcemapFile,
+                'sourceMapURL' => $SourcemapFile,
+                'sourceMapFilename' => $output,
+                'sourceMapBasepath' => $cssPath,
+            ]);
+        }
+        $compiler->setOutputStyle($style);
+
+        // write CSS to file
+        try {
+            $css = $compiler->compileString($content)->getCss();
+            $this->wire->files->filePutContents($output, $css);
+        } catch (\Exception $e) {
+            error_log($e);
+            bd($e);
+        }
+
+        // write SourceMap to file
+        if ($SourcemapFile) {
+            try {
+                $sourcemap = $compiler->compileString($content)->getSourceMap();
+                $this->wire->files->filePutContents($SourcemapFile, $sourcemap);
+            } catch (\Exception $e) {
+                error_log($e);
+                bd($e);
+            }
+        }
+    }
 
   /**
    * Compile input file to output file if any watched file is newer than output
