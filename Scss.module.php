@@ -19,7 +19,7 @@ class Scss extends WireData implements Module
   {
     return [
       'title' => 'Scss',
-      'version' => '1.1.0',
+      'version' => '1.2.0',
       'summary' => 'Module to compile CSS files from SCSS',
       'autoload' => false,
       'singular' => true,
