@@ -15,21 +15,6 @@ class Scss extends WireData implements Module
   /** @var Compiler */
   private $compiler;
 
-  public static function getModuleInfo()
-  {
-    return [
-      'title' => 'Scss',
-      'version' => '1.1.0',
-      'summary' => 'Module to compile CSS files from SCSS',
-      'autoload' => false,
-      'singular' => true,
-      'icon' => 'css3',
-      'requires' => [
-        'PHP>=8.0',
-      ],
-    ];
-  }
-
   /**
    * Compile input file to output file
    *
