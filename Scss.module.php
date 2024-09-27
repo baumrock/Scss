@@ -127,8 +127,10 @@ class Scss extends WireData implements Module
       $css = $compiler->compileString($content)->getCss();
       $this->wire->files->filePutContents($output, $css);
     } catch (\Exception $e) {
-      error_log($e);
-      bd($e);
+      $this->log($e->getMessage());
+      if (wire()->modules->isInstalled('TracyDebugger')) {
+        bd($e);
+      }
     }
 
     // write SourceMap to file
@@ -137,8 +139,10 @@ class Scss extends WireData implements Module
         $sourcemap = $compiler->compileString($content)->getSourceMap();
         $this->wire->files->filePutContents($SourcemapFile, $sourcemap);
       } catch (\Exception $e) {
-        error_log($e);
-        bd($e);
+        $this->log($e->getMessage());
+        if (wire()->modules->isInstalled('TracyDebugger')) {
+          bd($e);
+        }
       }
     }
   }
